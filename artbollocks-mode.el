@@ -132,13 +132,14 @@
 ;; Highlighting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun artbollocks-search-for-keyword (regex limit)
+(defun artbollocks-search-for-keyword (type regex limit)
   "Match REGEX in buffer until LIMIT."
   (let (match-data-to-set
 	found)
     (save-match-data
       (while (and (null match-data-to-set)
 		  (re-search-forward regex limit t))
+        (ov-set (ov-make (match-beginning 0) (match-end 0)) 'help-echo type)
 	    (setq match-data-to-set (match-data))))
     (when match-data-to-set
       (set-match-data match-data-to-set)
@@ -146,16 +147,16 @@
       t)))
 
 (defun artbollocks-lexical-illusions-search-for-keyword (limit)
-  (artbollocks-search-for-keyword artbollocks-lexical-illusions-regex limit))
+  (artbollocks-search-for-keyword "Lexical illusion" artbollocks-lexical-illusions-regex limit))
 
 (defun artbollocks-passive-voice-search-for-keyword (limit)
-  (artbollocks-search-for-keyword artbollocks-passive-voice-regex limit))
+  (artbollocks-search-for-keyword "Passive voice"  artbollocks-passive-voice-regex limit))
 
 (defun artbollocks-weasel-words-search-for-keyword (limit)
-  (artbollocks-search-for-keyword artbollocks-weasel-words-regex limit))
+  (artbollocks-search-for-keyword "Weasel word"  artbollocks-weasel-words-regex limit))
 
 (defun artbollocks-search-for-jargon (limit)
-  (artbollocks-search-for-keyword artbollocks-jargon-regex limit))
+  (artbollocks-search-for-keyword "Jargon" artbollocks-jargon-regex limit))
 
 (defconst artbollocks-lexicalkwlist
   '((artbollocks-lexical-illusions-search-for-keyword
@@ -187,7 +188,11 @@
   (font-lock-remove-keywords nil artbollocks-lexicalkwlist)
   (font-lock-remove-keywords nil artbollocks-passivekwlist)
   (font-lock-remove-keywords nil artbollocks-weaselkwlist)
-  (font-lock-remove-keywords nil artbollocks-kwlist))
+  (font-lock-remove-keywords nil artbollocks-kwlist)
+  (ov-clear 'help-echo "Lexical illusion")
+  (ov-clear 'help-echo "Passive voice")
+  (ov-clear 'help-echo "Weasel word")
+  (ov-clear 'help-echo "Jargon"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility macros
